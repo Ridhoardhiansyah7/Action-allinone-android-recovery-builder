@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       MANIFEST_URL:
-        description: 'MANIFEST_URL (if want to use SSH keys, use git@github.com:XXXXX)'
+        description: 'MANIFEST_URL (use twrp_omni url if you build for android 5.1 - android 10 device)'
         required: true
         default: 'https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp'
+        type: choice
+        options:
+          - https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp
+          - https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
