@@ -13,6 +13,12 @@ on:
         default: 'twrp-11'
         type: choice
         options:
+          - twrp-5-1
+          - twrp-6.0
+          - twrp-7.1
+          - twrp-8.1
+          - twrp-9.0
+          - twrp-10.0-deprecated
           - twrp-11
           - twrp-12.1
           - twrp-14
