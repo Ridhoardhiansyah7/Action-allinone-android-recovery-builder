@@ -1,4 +1,4 @@
-name: Recovery Build (Legacy)
+name: TWRP Build (Legacy A5.1 - 10.0)
 
 on:
   workflow_dispatch:
