@@ -145,6 +145,12 @@ jobs:
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
+    - name: Chmod a custom mkbootimg
+      run: |
+        chmod +x ${{ github.event.inputs.DEVICE_PATH }}/mkbootimg
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+      continue-on-error: true
+
     - name: Clone common tree
       if: |
         github.event.inputs.COMMON_TREE_URL != null
@@ -185,6 +191,7 @@ jobs:
       with:
         files: | 
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.tar
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*vendor*.img
         name: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.run_id }}
