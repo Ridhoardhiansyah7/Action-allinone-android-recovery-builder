@@ -140,6 +140,11 @@ jobs:
         repo sync -j$(nproc --all) --force-sync
       working-directory: workspace
 
+    - name: Apply graphics_drm patch
+      run: |
+        cp ${{ github.workspace }}/issue_atomic/graphics_drm.cpp \
+        ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp
+
     - name: Clone device tree
       run: |
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
