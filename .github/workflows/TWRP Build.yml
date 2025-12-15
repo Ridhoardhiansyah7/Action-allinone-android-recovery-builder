@@ -62,6 +62,15 @@ on:
           - recovery
           - boot
           - vendor_boot
+      FIX_ATOMIC_ISSUE:
+          description: 'Fix (atomic ret -22) in unisoc device with twrp 12.1 manifest'
+          required: false
+          default: 'false'
+          type: choice
+          options:
+              - 'true'
+              - 'false'
+              
 
 jobs:
   build:
@@ -139,9 +148,13 @@ jobs:
       run: |
         repo sync -j$(nproc --all) --force-sync
       working-directory: workspace
-
-    - name: Apply graphics_drm patch
+      
+    - name: Apply atomic ret -22 patch
+      if: |
+        github.event.inputs.FIX_ATOMIC_ISSUE == 'true'
+        && github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1'
       run: |
+        echo "Apply patch ${{ github.workspace }}/issue_atomic/graphics_drm.cpp >  ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp"
         cp ${{ github.workspace }}/issue_atomic/graphics_drm.cpp \
         ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp
 
