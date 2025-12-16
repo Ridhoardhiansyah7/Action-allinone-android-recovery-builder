@@ -46,7 +46,7 @@ on:
           - recovery
           - boot
           - vendorboot
-       FIX_ATOMIC_ISSUE:
+      FIX_ATOMIC_ISSUE:
           description: 'Fix (atomic ret -22) in unisoc device with twrp 12.1 manifest'
           required: false
           default: 'false'
