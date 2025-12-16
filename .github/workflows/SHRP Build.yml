@@ -6,11 +6,11 @@ on:
       MANIFEST_URL:
         description: 'MANIFEST_URL (if want to use SSH keys, use git@github.com:XXXXX)'
         required: true
-        default: 'https://github.com/SHRP/manifest'
+        default: 'https://github.com/SHRP-Reborn/manifest'
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
-        default: 'v3_11.0'
+        default: 'shrp_12.1'
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
@@ -45,7 +45,15 @@ on:
         options:
           - recovery
           - boot
-          - vendor_boot
+          - vendorboot
+       FIX_ATOMIC_ISSUE:
+          description: 'Fix (atomic ret -22) in unisoc device with twrp 12.1 manifest'
+          required: false
+          default: 'false'
+          type: choice
+          options:
+              - 'true'
+              - 'false'
 
 jobs:
   build:
@@ -123,6 +131,15 @@ jobs:
       run: |
         repo sync -j$(nproc --all) --force-sync
       working-directory: workspace
+
+    - name: Apply atomic ret -22 patch
+      if: |
+        github.event.inputs.FIX_ATOMIC_ISSUE == 'true'
+        && github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1'
+      run: |
+        echo "Apply patch ${{ github.workspace }}/issue_atomic/graphics_drm.cpp >  ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp"
+        cp ${{ github.workspace }}/issue_atomic/graphics_drm.cpp \
+        ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp
 
     - name: Clone device tree
       run: |
