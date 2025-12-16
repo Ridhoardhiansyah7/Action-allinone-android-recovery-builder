@@ -10,7 +10,7 @@ on:
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
-        default: 'shrp_12.1'
+        default: 'shrp-12.1'
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
@@ -136,6 +136,7 @@ jobs:
       if: |
         github.event.inputs.FIX_ATOMIC_ISSUE == 'true'
         && github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1'
+        || github.event.inputs.MANIFEST_BRANCH == 'shrp-12.1'
       run: |
         echo "Apply patch ${{ github.workspace }}/issue_atomic/graphics_drm.cpp >  ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp"
         cp ${{ github.workspace }}/issue_atomic/graphics_drm.cpp \
