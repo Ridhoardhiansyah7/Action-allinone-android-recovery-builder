@@ -123,9 +123,9 @@ jobs:
         github.event.inputs.FIX_ATOMIC_ISSUE == 'true'
         && github.event.inputs.MANIFEST_BRANCH == '12.1'
       run: |
-        echo "Apply patch ${{ github.workspace }}/issue_atomic/graphics_drm.cpp >  ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp"
+        echo "Apply patch ${{ github.workspace }}/issue_atomic/graphics_drm.cpp >  ${{ github.workspace }}/workspace/fox_12.1/bootable/recovery/minuitwrp/graphics_drm.cpp"
         cp ${{ github.workspace }}/issue_atomic/graphics_drm.cpp \
-        ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp
+        ${{ github.workspace }}/workspace/fox_12.1/bootable/recovery/minuitwrp/graphics_drm.cpp
       continue-on-error: false
 
     - name: Clone device tree
