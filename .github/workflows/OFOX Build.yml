@@ -22,7 +22,7 @@ on:
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
-        default: 'android-11'
+        default: 'android-12.1'
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
@@ -49,7 +49,15 @@ on:
         options:
           - recovery
           - boot
-          - vendor_boot
+          - vendorboot
+      FIX_ATOMIC_ISSUE:
+          description: 'Fix (atomic ret -22) in unisoc device with twrp 12.1 manifest'
+          required: false
+          default: 'false'
+          type: choice
+          options:
+              - 'true'
+              - 'false'
 
 jobs:
   build:
@@ -110,6 +118,16 @@ jobs:
         ./orangefox_sync.sh --branch ${{ github.event.inputs.MANIFEST_BRANCH }} --path ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
+    - name: Apply atomic ret -22 patch
+      if: |
+        github.event.inputs.FIX_ATOMIC_ISSUE == 'true'
+        && github.event.inputs.MANIFEST_BRANCH == '12.1'
+      run: |
+        echo "Apply patch ${{ github.workspace }}/issue_atomic/graphics_drm.cpp >  ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp"
+        cp ${{ github.workspace }}/issue_atomic/graphics_drm.cpp \
+        ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp
+      continue-on-error: false
+
     - name: Clone device tree
       run: |
         cd ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
@@ -139,8 +157,7 @@ jobs:
         set -e
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-      continue-on-error: true
-
+  
     - name: Check the output directory before uploading
       run: |
         ls -al ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/
