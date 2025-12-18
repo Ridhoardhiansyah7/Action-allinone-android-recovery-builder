@@ -131,16 +131,13 @@ jobs:
 
     - name: Getting AVBTool
       run: |
-        rm -rf out
-        mkdir out
-        mkdir out/host
-        mkdir out/host/linux-x86
-        mkdir out/host/linux-x86/bin
-        wget -P out/host/linux-x86/bin https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/bin/avbtool
-        chmod 777 out/host/linux-x86/bin/avbtool
-        ls out/host/linux-x86/bin/avbtool
+        mkdir -p fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/host/linux-x86/bin
+        wget -O fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/host/linux-x86/bin/avbtool \
+        https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/bin/avbtool
+        chmod +x fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/host/linux-x86/bin/avbtool
+        ls -l fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/host/linux-x86/bin/avbtool
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-
+      
     - name: Chmod a custom mkbootimg
       run: |
         echo " fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }}/mkbootimg "
@@ -161,7 +158,6 @@ jobs:
         set -e
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-      continue-on-error: true
 
     - name: Check the output directory before uploading
       run: |
@@ -175,6 +171,7 @@ jobs:
         python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
         python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img > image_info
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+      continue-on-error: true
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v2
