@@ -151,6 +151,18 @@ jobs:
         cp ${{ github.workspace }}/issue_atomic/graphics_drm.cpp \
         ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp
 
+    - name: Getting AVBTool
+      run: |
+        rm -rf out
+        mkdir out
+        mkdir out/host
+        mkdir out/host/linux-x86
+        mkdir out/host/linux-x86/bin
+        wget -P out/host/linux-x86/bin https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/bin/avbtool
+        chmod 777 out/host/linux-x86/bin/avbtool
+        ls out/host/linux-x86/bin/avbtool
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+
     - name: Clone device tree
       run: |
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
@@ -189,6 +201,13 @@ jobs:
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+
+    - name: Check AVB info
+      run: |
+        wget https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/avbtool.py
+        python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
+        python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img > image_info
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Upload to Release
