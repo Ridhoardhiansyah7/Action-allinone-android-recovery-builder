@@ -10,7 +10,7 @@ on:
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
-        default: 'android-11.0'
+        default: 'android-12.1'
         type: choice
         options:
           - android-6.0
@@ -28,7 +28,7 @@ on:
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
-        default: 'android-11'
+        default: 'android-12.1'
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
@@ -55,7 +55,15 @@ on:
         options:
           - recovery
           - boot
-          - vendor_boot
+          - vendorboot
+      FIX_ATOMIC_ISSUE:
+          description: 'Fix (atomic ret -22) in unisoc device with twrp 12.1 manifest'
+          required: false
+          default: 'false'
+          type: choice
+          options:
+              - 'true'
+              - 'false'
 
 jobs:
   build:
@@ -133,6 +141,15 @@ jobs:
       run: |
         repo sync -j$(nproc --all) --force-sync
       working-directory: workspace
+
+    - name: Apply atomic ret -22 patch
+      if: |
+        github.event.inputs.FIX_ATOMIC_ISSUE == 'true'
+        && github.event.inputs.MANIFEST_BRANCH == 'android-12.1'
+      run: |
+        echo "Apply patch ${{ github.workspace }}/issue_atomic/graphics_drm.cpp >  ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp"
+        cp ${{ github.workspace }}/issue_atomic/graphics_drm.cpp \
+        ${{ github.workspace }}/workspace/bootable/recovery/minuitwrp/graphics_drm.cpp
 
     - name: Clone device tree
       run: |
