@@ -58,6 +58,14 @@ on:
           options:
               - 'true'
               - 'false'
+      FIX_FLASHLIGHT_ISSUE:
+          description: 'Fix flashlight in unisoc device with twrp 12.1 manifest'
+          required: false
+          default: 'false'
+          type: choice
+          options:
+              - 'true'
+              - 'false'
 
 jobs:
   build:
@@ -128,6 +136,17 @@ jobs:
         ${{ github.workspace }}/workspace/fox_12.1/bootable/recovery/minuitwrp/graphics_drm.cpp
       continue-on-error: false
 
+
+    - name: Apply flashlight patch
+      if: |
+        github.event.inputs.FIX_FLASHLIGHT_ISSUE == 'true'
+        && github.event.inputs.MANIFEST_BRANCH == '12.1'
+      run: |
+        echo "Apply patch ${{ github.workspace }}/issue_flashlight/ofox/action.cpp >  ${{ github.workspace }}/workspace/fox_12.1/bootable/recovery/gui/action.cpp"
+        cp ${{ github.workspace }}/issue_flashlight/ofox/action.cpp \
+        ${{ github.workspace }}/workspace/fox_12.1/bootable/recovery/gui/action.cpp
+      continue-on-error: false
+
     - name: Clone device tree
       run: |
         cd ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
@@ -157,7 +176,7 @@ jobs:
         set -e
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-  
+
     - name: Check the output directory before uploading
       run: |
         ls -al ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/
