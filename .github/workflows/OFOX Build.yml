@@ -142,8 +142,8 @@ jobs:
         github.event.inputs.FIX_FLASHLIGHT_ISSUE == 'true'
         && github.event.inputs.MANIFEST_BRANCH == '12.1'
       run: |
-        echo "Apply patch ${{ github.workspace }}/issue_flashlight/ofox/action.cpp >  ${{ github.workspace }}/workspace/fox_12.1/bootable/recovery/gui/action.cpp"
-        cp ${{ github.workspace }}/issue_flashlight/ofox/action.cpp \
+        echo "Apply patch ${{ github.workspace }}/issue_flashligh/ofox/action.cpp >  ${{ github.workspace }}/workspace/fox_12.1/bootable/recovery/gui/action.cpp"
+        cp ${{ github.workspace }}/issue_flashligh/ofox/action.cpp \
         ${{ github.workspace }}/workspace/fox_12.1/bootable/recovery/gui/action.cpp
       continue-on-error: false
 
