@@ -162,10 +162,10 @@ jobs:
         git clone ${{ github.event.inputs.COMMON_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.COMMON_PATH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
-    - name: Chmod a custom mkbootimg
+    - name: Debug
       run: |
-        chmod +x ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }}/mkbootimg
-
+        echo "Test"
+        
     - name: Chmod a custom mkbootimg
       run: |
         echo "Expected path:"
