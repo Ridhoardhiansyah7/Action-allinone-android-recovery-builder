@@ -166,6 +166,21 @@ jobs:
       run: |
         chmod +x ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }}/mkbootimg
 
+    - name: Chmod a custom mkbootimg
+      run: |
+        echo "Expected path:"
+        echo "fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }}/mkbootimg"
+
+        echo "---- Searching mkbootimg in workspace ----"
+        find fox_${{ github.event.inputs.MANIFEST_BRANCH }} -type f -name mkbootimg
+
+        echo "---- Listing device folder ----"
+        ls -R fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }} || true
+
+        echo "---- Applying chmod ----"
+        chmod +x fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }}/mkbootimg
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+
     - name: Getting AVBTool
       run: |
         rm -rf out
