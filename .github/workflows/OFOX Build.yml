@@ -179,13 +179,13 @@ jobs:
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
 
-     - name: Getting AVBTool
-       run: |
-         cd fox_{{ github.event.inputs.MANIFEST_BRANCH }}
-         mkdir -p out/host/linux-x86/bin
-         wget -P out/host/linux-x86/bin https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/bin/avbtool
-         chmod +x out/host/linux-x86/bin/avbtool
-         ls out/host/linux-x86/bin/
+    - name: Getting AVBTool
+      run: |
+        cd fox_{{ github.event.inputs.MANIFEST_BRANCH }}
+        mkdir -p out/host/linux-x86/bin
+        wget -P out/host/linux-x86/bin https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/bin/avbtool
+        chmod +x out/host/linux-x86/bin/avbtool
+        ls out/host/linux-x86/bin/
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Set Swap Space
