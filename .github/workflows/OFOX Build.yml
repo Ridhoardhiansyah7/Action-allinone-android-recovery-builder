@@ -162,9 +162,6 @@ jobs:
         git clone ${{ github.event.inputs.COMMON_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.COMMON_PATH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
-    - name: Debug
-      run: |
-        echo "Test"
         
     - name: Chmod a custom mkbootimg
       run: |
@@ -181,16 +178,14 @@ jobs:
         chmod +x fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }}/mkbootimg
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
-    - name: Getting AVBTool
-      run: |
-        rm -rf out
-        mkdir out
-        mkdir out/host
-        mkdir out/host/linux-x86
-        mkdir out/host/linux-x86/bin
-        wget -P out/host/linux-x86/bin https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/bin/avbtool
-        chmod 777 out/host/linux-x86/bin/avbtool
-        ls out/host/linux-x86/bin/avbtool
+
+     - name: Getting AVBTool
+       run: |
+         cd fox_{{ github.event.inputs.MANIFEST_BRANCH }}
+         mkdir -p out/host/linux-x86/bin
+         wget -P out/host/linux-x86/bin https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/bin/avbtool
+         chmod +x out/host/linux-x86/bin/avbtool
+         ls out/host/linux-x86/bin/
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Set Swap Space
