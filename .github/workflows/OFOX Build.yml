@@ -177,11 +177,12 @@ jobs:
         echo "---- Applying chmod ----"
         chmod +x fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }}/mkbootimg
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+      continue-on-error: true
 
 
     - name: Getting AVBTool
       run: |
-        cd fox_{{ github.event.inputs.MANIFEST_BRANCH }}
+        cd fox_${{ github.event.inputs.MANIFEST_BRANCH }}
         mkdir -p out/host/linux-x86/bin
         wget -P out/host/linux-x86/bin https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/bin/avbtool
         chmod +x out/host/linux-x86/bin/avbtool
@@ -218,6 +219,7 @@ jobs:
         python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
         python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img > image_info
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+      continue-on-error: true
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v2
