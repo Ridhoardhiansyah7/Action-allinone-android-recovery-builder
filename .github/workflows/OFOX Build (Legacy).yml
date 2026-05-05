@@ -144,6 +144,7 @@ jobs:
         echo " fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }}/mkbootimg "
         chmod +x fox_${{ github.event.inputs.MANIFEST_BRANCH }}/${{ github.event.inputs.DEVICE_PATH }}/mkbootimg
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+      continue-on-error: true
 
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
