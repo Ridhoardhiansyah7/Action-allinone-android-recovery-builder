@@ -252,27 +252,58 @@ jobs:
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
+    - name: Resolve Image Filename
+      id: image
+      run: |
+        case "${{ github.event.inputs.BUILD_TARGET }}" in
+          recovery)
+            IMAGE_NAME="recovery.img"
+            ;;
+          boot)
+            IMAGE_NAME="boot.img"
+            ;;
+          vendorboot)
+            IMAGE_NAME="vendor_boot.img"
+            ;;
+          *)
+            echo "Unknown build target"
+            exit 1
+            ;;
+        esac
+
+        echo "name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
+        echo "Image filename: $IMAGE_NAME"
+
     - name: Check AVB info
       run: |
         wget https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/avbtool.py
-        python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
-        python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img > image_info
+
+        IMAGE="out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ steps.image.outputs.name }}"
+
+        if [ ! -f "$IMAGE" ]; then
+          echo "ERROR: Image not found: $IMAGE"
+          ls -lah "out/target/product/${{ github.event.inputs.DEVICE_NAME }}/"
+          exit 1
+        fi
+
+        echo "Checking: $IMAGE"
+
+        python3 avbtool.py info_image --image "$IMAGE" | tee image_info
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v2
       with:
-        files: | 
+        files: |
           workspace/image_info
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.tar
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ steps.image.outputs.name }}
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*vendor*.img
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
           Manifest: ${{ github.event.inputs.MANIFEST_BRANCH }}
           Device: ${{ github.event.inputs.DEVICE_NAME }}
-          Target: ${{ github.event.inputs.BUILD_TARGET }}.img
+          Target: ${{ steps.image.outputs.name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
