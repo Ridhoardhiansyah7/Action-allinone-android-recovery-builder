@@ -293,6 +293,7 @@ jobs:
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v2
+      continue-on-error: true
       with:
         files: |
           workspace/image_info
@@ -300,6 +301,7 @@ jobs:
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*vendor*.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/obj/PACKAGING/vendor_boot_intermediates/vendor_ramdisk.cpio.gz
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/obj/PACKAGING/vendor_ramdisk_fragments_intermediates/recovery.cpio.gz
         name: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
