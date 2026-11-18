@@ -299,6 +299,7 @@ jobs:
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ steps.image.outputs.name }}
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*vendor*.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/obj/PACKAGING/vendor_boot_intermediates/vendor_ramdisk.cpio.gz
         name: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
